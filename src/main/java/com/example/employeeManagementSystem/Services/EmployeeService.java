@@ -1,18 +1,19 @@
 package com.example.employeeManagementSystem.Services;
 
-import com.example.employeeManagementSystem.entities.Employee;
+import com.example.employeeManagementSystem.dto.response.EmployeeDetails;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface EmployeeService {
-    public List<Employee> getEmployees();
+    public List<EmployeeDetails> getEmployees();
 
-    public Employee setEmployee(Employee employee);
+    public ResponseEntity<EmployeeDetails> setEmployee(com.example.employeeManagementSystem.dto.request.EmployeeDetails employee);
 
-    public String deleteEmployee(Long employeeId);
+    public ResponseEntity<String> deleteEmployee(Long employeeId);
 
-    public Optional<Employee> getEmployee(Long employeeId);
+    public EmployeeDetails getEmployee(Long employeeId);
 
-    public Employee getEmployeeOne(Long employeeId);
+
+    public ResponseEntity<String> editEmployee(com.example.employeeManagementSystem.dto.request.EmployeeDetails employeeDetails);
 }
