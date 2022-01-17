@@ -17,14 +17,14 @@ public class EmployeeController {
 
     //Getting all Employee Data
     @GetMapping("/employees")
-    public List<EmployeeDetails> getEmployees(){
-        return this.employeeService.getEmployees();
+    public ResponseEntity<List<EmployeeDetails>> getEmployees(@RequestParam("page") int page, @RequestParam("pageSize") int pageSize){
+        return this.employeeService.getEmployees(page, pageSize);
     }
 
     //Getting Particular Employee Data
     //Parameter: employeeId: Id of Employee
     @GetMapping("/employee/{employeeId}")
-    public EmployeeDetails getEmployee(@PathVariable Long employeeId){
+    public ResponseEntity<EmployeeDetails> getEmployee(@PathVariable Long employeeId){
         return this.employeeService.getEmployee(employeeId);
     }
 

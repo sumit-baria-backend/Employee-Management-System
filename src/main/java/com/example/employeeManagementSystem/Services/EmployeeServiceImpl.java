@@ -4,6 +4,9 @@ import com.example.employeeManagementSystem.dao.EmployeeDao;
 import com.example.employeeManagementSystem.dto.response.EmployeeDetails;
 import com.example.employeeManagementSystem.entities.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -25,10 +28,12 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     //Get All Employee service
     @Override
-    public List<EmployeeDetails> getEmployees() {
+    public ResponseEntity<List<EmployeeDetails>> getEmployees(int page, int pageSize) {
 
         List<EmployeeDetails> employeeDetailsList = new LinkedList<>();
-        for(Employee employee: employeeDao.findAll()){
+        Pageable firstPageWithFiveElement = PageRequest.of(page,pageSize);
+
+        for(Employee employee: employeeDao.findAll(firstPageWithFiveElement)){
             EmployeeDetails employeeDetails = new EmployeeDetails();
             employeeDetails.setEmployeeId(employee.getEmployeeId());
             employeeDetails.setEmployeeName(employee.getEmployeeName());
@@ -36,7 +41,7 @@ public class EmployeeServiceImpl implements EmployeeService{
             employeeDetailsList.add(employeeDetails);
         }
 
-        return employeeDetailsList;
+        return ResponseEntity.status(HttpStatus.OK).body(employeeDetailsList);
     }
 
     //Add employee in DB
@@ -61,22 +66,19 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     //Get particular employee Record
     @Override
-    public EmployeeDetails getEmployee(Long employeeId) {
+    public ResponseEntity<EmployeeDetails> getEmployee(Long employeeId) {
         EmployeeDetails employeeDetails = new EmployeeDetails();
-        Employee employee = new Employee();
-        employee = employeeDao.getById(employeeId);
+        Employee employee = employeeDao.getById(employeeId);
 
         employeeDetails.setEmployeeId(employee.getEmployeeId());
         employeeDetails.setEmployeeName(employee.getEmployeeName());
         employeeDetails.setJoiningDate(employee.getJoiningDate());
-        return employeeDetails;
+        return ResponseEntity.status(HttpStatus.OK).body(employeeDetails);
     }
 
     @Override
     public ResponseEntity<String> editEmployee(com.example.employeeManagementSystem.dto.request.EmployeeDetails employeeDetails) {
-        Employee employee = new Employee();
-
-
+        Employee employee;
         if(employeeDao.existsById(employeeDetails.getEmployeeId())){
             employee = employeeDao.getById(employeeDetails.getEmployeeId());
             employee.setEmployeeName(employeeDetails.getEmployeeName());
@@ -86,7 +88,6 @@ public class EmployeeServiceImpl implements EmployeeService{
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Employee Not Found");
         }
-
 
     }
 
