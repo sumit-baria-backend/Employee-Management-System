@@ -17,8 +17,8 @@ public class EmployeeController {
 
     //Getting all Employee Data
     @GetMapping("/employees")
-    public ResponseEntity<List<EmployeeDetails>> getEmployees(@RequestParam("page") int page, @RequestParam("pageSize") int pageSize){
-        return this.employeeService.getEmployees(page, pageSize);
+    public ResponseEntity<List<EmployeeDetails>> getEmployees(@RequestParam(value = "page", required = false) int page){
+        return this.employeeService.getEmployees(page);
     }
 
     //Getting Particular Employee Data

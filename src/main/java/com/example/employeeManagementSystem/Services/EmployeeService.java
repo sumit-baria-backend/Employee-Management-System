@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface EmployeeService {
-    public ResponseEntity<List<EmployeeDetails>> getEmployees(int page, int pageSize);
+    public ResponseEntity<List<EmployeeDetails>> getEmployees(int page);
 
     public ResponseEntity<EmployeeDetails> setEmployee(com.example.employeeManagementSystem.dto.request.EmployeeDetails employee);
 

@@ -28,12 +28,13 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     //Get All Employee service
     @Override
-    public ResponseEntity<List<EmployeeDetails>> getEmployees(int page, int pageSize) {
+    public ResponseEntity<List<EmployeeDetails>> getEmployees(int page) {
 
         List<EmployeeDetails> employeeDetailsList = new LinkedList<>();
-        Pageable firstPageWithFiveElement = PageRequest.of(page,pageSize);
+        Pageable firstPageWithFiveElement = PageRequest.of(page, 5);
+        Page<Employee> employeeDetailsList1 =  employeeDao.findAll(firstPageWithFiveElement);
 
-        for(Employee employee: employeeDao.findAll(firstPageWithFiveElement)){
+        for(Employee employee: employeeDetailsList1){
             EmployeeDetails employeeDetails = new EmployeeDetails();
             employeeDetails.setEmployeeId(employee.getEmployeeId());
             employeeDetails.setEmployeeName(employee.getEmployeeName());
@@ -48,8 +49,9 @@ public class EmployeeServiceImpl implements EmployeeService{
     @Override
     public ResponseEntity<EmployeeDetails> setEmployee(com.example.employeeManagementSystem.dto.request.EmployeeDetails employeeDetail) {
         Employee e =  new Employee(employeeDetail.getEmployeeName(),  LocalDate.now(), LocalDateTime.now(), LocalDateTime.now());
-        employeeDao.save(e);
-        EmployeeDetails employeeDetails = new EmployeeDetails(e.getEmployeeId(),e.getEmployeeName(), e.getJoiningDate());
+        Employee employee = employeeDao.save(e);
+
+        EmployeeDetails employeeDetails = new EmployeeDetails(employee.getEmployeeId(),employee.getEmployeeName(), employee.getJoiningDate());
         return ResponseEntity.status(HttpStatus.OK).body(employeeDetails);
     }
 
@@ -57,7 +59,8 @@ public class EmployeeServiceImpl implements EmployeeService{
     @Override
     public ResponseEntity<String> deleteEmployee(Long employeeId) {
         if(employeeDao.existsById(employeeId)){
-            employeeDao.deleteById(employeeId);
+            Employee employee = employeeDao.getById(employeeId);
+            employeeDao.delete(employee);
             return ResponseEntity.status(HttpStatus.OK).body("Employee Deleted");
         } else{
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Employee Not Found");
@@ -76,6 +79,7 @@ public class EmployeeServiceImpl implements EmployeeService{
         return ResponseEntity.status(HttpStatus.OK).body(employeeDetails);
     }
 
+    //Edit the details of Employee
     @Override
     public ResponseEntity<String> editEmployee(com.example.employeeManagementSystem.dto.request.EmployeeDetails employeeDetails) {
         Employee employee;

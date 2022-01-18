@@ -59,6 +59,14 @@ public class Employee {
         this.updatedAt = updatedAt;
     }
 
+    public Employee(long employeeId, String employeeName, LocalDate joiningDate, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.employeeId = employeeId;
+        this.employeeName = employeeName;
+        this.joiningDate = joiningDate;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
     public long getEmployeeId() {
         return employeeId;
     }
