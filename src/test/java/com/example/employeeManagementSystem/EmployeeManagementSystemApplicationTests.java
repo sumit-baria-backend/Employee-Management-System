@@ -35,19 +35,29 @@ class EmployeeManagementSystemApplicationTests {
 	@InjectMocks
 	private EmployeeServiceImpl employeeServiceImpl;
 
-//Test about the Delete by employee Id Service
+	//Test about the Delete by employee Id Service
 	@Test
 	public void givenEmployeeId_WhenDeleteRequestisRaise_thanItshouldBeDeletedFromDatabase()
 	{
 		long employeeResignedId=5;
-		ArgumentCaptor<Long> employeeIdCapturer = ArgumentCaptor.forClass(Long.class);
+		LocalDate date = LocalDate.now();
+		LocalDateTime dateTime = LocalDateTime.now();
+
+		Employee employee = new Employee(employeeResignedId, "Sumit", date, dateTime, dateTime);
 		when(employeeDao.existsById(employeeResignedId)).thenReturn(true);
-		employeeServiceImpl.deleteEmployee(employeeResignedId);
+		when(employeeDao.getById(employeeResignedId)).thenReturn(employee);
+
+		ResponseEntity<String> actualDeletedEmployeeResponse = 	employeeServiceImpl.deleteEmployee(employeeResignedId);
+		ResponseEntity<String> expectedDeletedEmployeeResponse =  ResponseEntity.status(HttpStatus.OK).body("Employee Deleted");
+
+		ArgumentCaptor<Long> employeeIdCapturer = ArgumentCaptor.forClass(Long.class);
+
 		verify(employeeDao,times(1)).getById(employeeIdCapturer.capture());
 		assertEquals(employeeResignedId, employeeIdCapturer.getValue());
+		assertEquals(expectedDeletedEmployeeResponse, actualDeletedEmployeeResponse);
 	}
 
-//	Test about get employee by Id service
+	//Test about get employee by Id service
 	@Test
 	public void giveEmployeeId_WhenGetEmployeeById_ThenItSchouldReturnEmployee(){
 		long employeeId = 2;
@@ -72,7 +82,7 @@ class EmployeeManagementSystemApplicationTests {
 		assertEquals(actucal.getBody().getJoiningDate(), employeeDetailsResponseEntity.getBody().getJoiningDate());
 	}
 
-//	Test about edit employee by Id service
+	//Test about edit employee by Id service
 	@Test
 	public void giveEmployeeId_WhenEditEmployee_ThenItShouldEditEmployeeDate(){
 		long employeeId = 2;
@@ -85,13 +95,13 @@ class EmployeeManagementSystemApplicationTests {
 		Employee employee = new Employee("Sumit", date, localDate, localDate);
 		employee.setEmployeeId(employeeId);
 
-		ArgumentCaptor<Employee> employeeArgumentCaptor = ArgumentCaptor.forClass(Employee.class);
+//		ArgumentCaptor<Employee> employeeArgumentCaptor = ArgumentCaptor.forClass(Employee.class);
 
 		when(employeeDao.existsById(employeeId)).thenReturn(true);
 		when(employeeDao.getById(employeeId)).thenReturn(employee);
 
 		ResponseEntity<String> actual = employeeServiceImpl.editEmployee(employeeDetails);
-		verify(employeeDao,times(1)).save(employeeArgumentCaptor.capture());
+//		verify(employeeDao,times(1)).save(employeeArgumentCaptor.capture());
 
 		ResponseEntity<String> expected = ResponseEntity.status(HttpStatus.OK).body("Employee Updated");
 
@@ -147,7 +157,6 @@ class EmployeeManagementSystemApplicationTests {
 		when(employeeDao.findAll(firstFiveEmployees)).thenReturn( employeePage);
 
 		ResponseEntity<List<EmployeeDetails>> employeeDetailsResponseEntity = employeeServiceImpl.getEmployees(page);
-
 		ResponseEntity<List<EmployeeDetails>> expactedEmployeeDetails = ResponseEntity.status(HttpStatus.OK).body(employeeDetailsList);
 
 		ArgumentCaptor<EmployeeDetails> employeeArgumentCaptor = ArgumentCaptor.forClass(EmployeeDetails.class);
